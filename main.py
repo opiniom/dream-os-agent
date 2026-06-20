@@ -26,7 +26,7 @@ class GeminiWorker(QThread):
     request_approval = pyqtSignal(str)       # UI 스레드로 팝업 요청 신호
     finished_signal = pyqtSignal(bool)       # 작업 완료 신호
 
-    def __init__(self, memory_manager, user_query, model_name="gemini-1.5-pro"):
+    def __init__(self, memory_manager, user_query, model_name="gemini-2.5-pro"):
         super().__init__()
         self.memory = memory_manager
         self.query = user_query

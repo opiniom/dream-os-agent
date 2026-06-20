@@ -12,7 +12,7 @@ class DreamSynthesizer:
     대화 기록과 작업 로그를 분석하고, Gemini API(gemini-1.5-pro)를 통해 
     persona_profile.json과 project_context.md를 갱신(Atomic Write 방식)하는 클래스입니다.
     """
-    def __init__(self, memory_manager, max_runs_per_hour=5, max_runs_per_day=20, model_name="gemini-1.5-pro"):
+    def __init__(self, memory_manager, max_runs_per_hour=5, max_runs_per_day=20, model_name="gemini-2.5-pro"):
         self.manager = memory_manager
         self.max_runs_per_hour = max_runs_per_hour
         self.max_runs_per_day = max_runs_per_day
