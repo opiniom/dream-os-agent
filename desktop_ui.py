@@ -195,6 +195,7 @@ class DesktopOverlayWindow(QWidget):
 
         self.setGeometry(x, y, self.width_val, self.height_val)
         print(f"[UI] Window positioned at ({x}, {y}) with size {self.width_val}x{self.height_val}")
+        print("[UI] [★단축키 안내★] 키보드 단축키 'Ctrl + Space'를 누르면 바탕화면의 투명 창이 활성화되어 타이핑할 수 있습니다. 'ESC'를 누르면 다시 투과 모드로 돌아갑니다.")
 
     def apply_acrylic_blur(self):
         """Windows DWM API를 이용해 아크릴 블러(Glassmorphism) 효과 적용"""
