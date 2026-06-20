@@ -299,7 +299,7 @@ class Orchestrator:
     def on_worker_complete(self, success):
         """백그라운드 스레드 종료 시 다시 대기 상태로 전환"""
         self.ui.input_box.setEnabled(True)
-        self.ui.input_box.setPlaceholderText("Alt + Shift + D로 활성화 / 질문을 입력하세요...")
+        self.ui.input_box.setPlaceholderText("질문을 입력하고 Enter를 누르세요...")
         self.ui.input_box.setFocus()
         self.timer.poke()
         self.worker = None
@@ -313,8 +313,8 @@ if __name__ == "__main__":
         orchestrator.ui.show()
         
         print("\n=== Dream OS Agent 최종 오케스트레이터(main.py) 구동 중 ===")
-        print("- 단축키: Alt + Shift + D (창 활성화 및 입력 포커스)")
-        print("- 단축키: ESC (마우스 클릭 투과 패시브 모드)")
+        print("- 안내: 실행 즉시 입력창이 활성화되어 타이핑할 수 있습니다.")
+        print("- 안내: ESC 키를 누르면 창이 닫힙니다.")
         print("- 백그라운드 가동: 사용자가 5분간 미작동 시 메모리 리팩토링 Dreaming 자동 구동")
         print("============================================================\n")
         

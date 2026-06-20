@@ -83,18 +83,15 @@ class DesktopOverlayWindow(QWidget):
         super().__init__()
         self.memory_manager = memory_manager
         self.dream_timer = dream_timer
-        self.is_click_through = True
+        self.is_click_through = False
 
         self.init_window_properties()
         self.init_ui_layout()
         self.center_and_position_window()
         self.apply_acrylic_blur()
         
-        # 기본 마우스 투과 상태로 시작
-        self.enable_click_through()
-        
-        # 전역 단축키 Alt+Shift+D 등록
-        self.register_global_hotkey()
+        # 실행 즉시 마우스 투과가 해제된 활성 상태로 기동
+        self.disable_click_through()
 
     def init_window_properties(self):
         """윈도우 기본 창 플래그 및 속성 설정"""
@@ -159,7 +156,7 @@ class DesktopOverlayWindow(QWidget):
 
         # [2] 하단 슬림 질문 입력창 (QLineEdit)
         self.input_box = QLineEdit()
-        self.input_box.setPlaceholderText("Alt + Shift + D로 활성화 / 질문을 입력하세요...")
+        self.input_box.setPlaceholderText("질문을 입력하고 Enter를 누르세요...")
         self.input_box.setFont(QFont("Malgun Gothic", 10))
         self.input_box.setStyleSheet("""
             QLineEdit {
@@ -195,7 +192,7 @@ class DesktopOverlayWindow(QWidget):
 
         self.setGeometry(x, y, self.width_val, self.height_val)
         print(f"[UI] Window positioned at ({x}, {y}) with size {self.width_val}x{self.height_val}")
-        print("[UI] [★단축키 안내★] 키보드 단축키 'Alt + Shift + D'를 누르면 바탕화면의 투명 창이 활성화되어 타이핑할 수 있습니다. 'ESC'를 누르면 다시 투과 모드로 돌아갑니다.")
+        print("[UI] [안내] ESC 키를 누르면 프로그램이 종료됩니다.")
 
     def apply_acrylic_blur(self):
         """Windows DWM API를 이용해 아크릴 블러(Glassmorphism) 효과 적용"""
@@ -273,46 +270,22 @@ class DesktopOverlayWindow(QWidget):
         print("[UI] Click-through disabled. Focus recovered to Input Box.")
 
     # --------------------------------------------------
-    # 전역 단축키 및 키 이벤트 처리
+    # 전역 단축키 미사용 설정
     # --------------------------------------------------
     def register_global_hotkey(self):
-        """Alt + Shift + D 전역 단축키 등록"""
-        hwnd = int(self.winId())
-        # MOD_ALT = 0x0001, MOD_SHIFT = 0x0004, VK_D = 0x44 (조합 = 0x0005)
-        success = ctypes.windll.user32.RegisterHotKey(hwnd, self.HOTKEY_ID, 0x0001 | 0x0004, 0x44)
-        if success:
-            print("[UI] Global Hotkey Alt+Shift+D registered successfully.")
-        else:
-            print("[Error] Failed to register Global Hotkey Alt+Shift+D.")
+        pass
 
     def unregister_global_hotkey(self):
-        """전역 단축키 등록 해제"""
-        hwnd = int(self.winId())
-        ctypes.windll.user32.UnregisterHotKey(hwnd, self.HOTKEY_ID)
-        print("[UI] Global Hotkey unregistered.")
+        pass
 
     def nativeEvent(self, event_type, message):
-        """Windows OS 이벤트를 가로채 WM_HOTKEY를 필터링합니다."""
-        try:
-            if event_type == b"windows_generic_MSG" and message:
-                addr = int(message)
-                if addr != 0:
-                    msg = MSG.from_address(addr)
-                    if msg.message == 0x0312:  # WM_HOTKEY
-                        if msg.wParam == self.HOTKEY_ID:
-                            print("[Event] Alt+Shift+D Hotkey detected!")
-                            # 단축키 입력 시 마우스 투과 해제하고 활성화
-                            self.disable_click_through()
-                            return True, 0
-        except Exception as e:
-            print(f"[Error] nativeEvent crash prevented: {e}")
         return super().nativeEvent(event_type, message)
 
     def keyPressEvent(self, event):
-        """ESC 키 입력 시 투과 모드로 안전하게 복귀"""
+        """ESC 키 입력 시 창을 닫아 프로그램 종료"""
         if event.key() == Qt.Key.Key_Escape:
-            print("[UI] ESC pressed. Returning to click-through mode.")
-            self.enable_click_through()
+            print("[UI] ESC pressed. Closing application.")
+            self.close()
             event.accept()
         else:
             super().keyPressEvent(event)
@@ -409,8 +382,8 @@ if __name__ == "__main__":
     window.show()
     
     print("\n=== 바탕화면 투명 에이전트 창 구동 중 ===")
-    print("- 단축키: Alt + Shift + D (마우스 투과 해제 및 텍스트 박스 포커싱)")
-    print("- 단축키: ESC (마우스 투과 모드 재활성화)")
+    print("- 안내: 실행 즉시 입력창이 활성화되어 타이핑할 수 있습니다.")
+    print("- 안내: ESC 키를 누르면 창이 닫힙니다.")
     print("=========================================\n")
     
     sys.exit(app.exec())
