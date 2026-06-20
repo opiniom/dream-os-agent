@@ -109,7 +109,7 @@ class DesktopOverlayWindow(QWidget):
         self.setWindowTitle("Dream OS Agent Overlay")
 
     def init_ui_layout(self):
-        """UI 구성 요소 생성 및 배치 (슬림 입력창이 최상단에 오는 뒤집힌 레이아웃)"""
+        """UI 구성 요소 생성 및 배치 (상단 답변 창, 하단 슬림 질문 입력 창 배치)"""
         # 전체를 감싸는 투명 레이아웃
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -124,27 +124,7 @@ class DesktopOverlayWindow(QWidget):
         container_layout.setContentsMargins(15, 15, 15, 15)
         container_layout.setSpacing(12)
 
-        # [1] 최상단 슬림 질문 입력창 (QLineEdit)
-        self.input_box = QLineEdit()
-        self.input_box.setPlaceholderText("Ctrl + F1로 활성화 / 질문을 입력하세요...")
-        self.input_box.setFont(QFont("Malgun Gothic", 10))
-        self.input_box.setStyleSheet("""
-            QLineEdit {
-                background-color: rgba(255, 255, 255, 18);
-                border: 1px solid rgba(255, 255, 255, 30);
-                border-radius: 8px;
-                color: #FFFFFF;
-                padding: 8px 12px;
-            }
-            QLineEdit:focus {
-                background-color: rgba(255, 255, 255, 30);
-                border: 1px solid rgba(138, 180, 248, 200); /* 은은한 푸른색 포커스 테두리 */
-            }
-        """)
-        self.input_box.returnPressed.connect(self.on_question_submitted)
-        container_layout.addWidget(self.input_box)
-
-        # [2] 하단 답변 출력창 (QTextBrowser)
+        # [1] 상단 답변 출력창 (QTextBrowser)
         self.output_view = QTextBrowser()
         self.output_view.setFont(QFont("Malgun Gothic", 9))
         self.output_view.setStyleSheet("""
@@ -175,8 +155,28 @@ class DesktopOverlayWindow(QWidget):
                 background: transparent;
             }
         """)
-        
         container_layout.addWidget(self.output_view)
+
+        # [2] 하단 슬림 질문 입력창 (QLineEdit)
+        self.input_box = QLineEdit()
+        self.input_box.setPlaceholderText("Ctrl + F1로 활성화 / 질문을 입력하세요...")
+        self.input_box.setFont(QFont("Malgun Gothic", 10))
+        self.input_box.setStyleSheet("""
+            QLineEdit {
+                background-color: rgba(255, 255, 255, 18);
+                border: 1px solid rgba(255, 255, 255, 30);
+                border-radius: 8px;
+                color: #FFFFFF;
+                padding: 8px 12px;
+            }
+            QLineEdit:focus {
+                background-color: rgba(255, 255, 255, 30);
+                border: 1px solid rgba(138, 180, 248, 200); /* 은은한 푸른색 포커스 테두리 */
+            }
+        """)
+        self.input_box.returnPressed.connect(self.on_question_submitted)
+        container_layout.addWidget(self.input_box)
+
         main_layout.addWidget(self.container)
 
     def center_and_position_window(self):
