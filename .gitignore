@@ -3,4 +3,7 @@ __pycache__/
 .agent_memory/
 .tmp_*
 .venv/
+.env
+.env.*
+
 
