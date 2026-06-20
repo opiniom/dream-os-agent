@@ -215,14 +215,27 @@ class DesktopOverlayWindow(QWidget):
 
     def disable_click_through(self):
         """창을 활성화하여 텍스트 상자에 포커스를 강제합니다."""
+        print("[Debug] Entered disable_click_through")
         self.container.setStyleSheet(self.ACTIVE_QSS)
+        print("[Debug] Style sheet updated")
         
+        print("[Debug] Calling self.show()...")
         self.show()
+        print("[Debug] self.show() completed")
+        
+        print("[Debug] Calling self.raise_()...")
         self.raise_()
+        print("[Debug] self.raise_() completed")
+        
+        print("[Debug] Calling self.activateWindow()...")
         self.activateWindow()
+        print("[Debug] self.activateWindow() completed")
         
         # 입력 상자에 포커스 제공
+        print("[Debug] Calling self.input_box.setFocus()...")
         self.input_box.setFocus()
+        print("[Debug] self.input_box.setFocus() completed")
+        
         self.is_click_through = False
         print("[UI] Focus recovered to Input Box (Native Windows API bypassed).")
 
