@@ -95,11 +95,11 @@ class DesktopOverlayWindow(QWidget):
 
     def init_window_properties(self):
         """윈도우 기본 창 플래그 및 속성 설정"""
-        # 프레임 없음, 항상 위에 표시, 툴윈도우(작업표시줄에 아이콘이 나타나지 않음)
+        # 프레임 없음, 항상 위에 표시, 작업표시줄 아이콘 미표시(Tool)
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint | 
             Qt.WindowType.WindowStaysOnTopHint | 
-            Qt.WindowType.SubWindow
+            Qt.WindowType.Tool
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
         self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, True)
