@@ -57,7 +57,7 @@ except ImportError:
 class DesktopOverlayWindow(QWidget):
     """
     윈도우 바탕화면에 상주하는 투명한 글래스모피즘 스타일의 오버레이 창입니다.
-    마우스 투과(Click-through) 및 전역 단축키 Ctrl+F1 제어 기능을 네이티브 Windows API로 제어합니다.
+    마우스 투과(Click-through) 및 전역 단축키 Alt+Shift+D 제어 기능을 네이티브 Windows API로 제어합니다.
     """
     HOTKEY_ID = 101
 
@@ -93,7 +93,7 @@ class DesktopOverlayWindow(QWidget):
         # 기본 마우스 투과 상태로 시작
         self.enable_click_through()
         
-        # 전역 단축키 Ctrl+F1 등록
+        # 전역 단축키 Alt+Shift+D 등록
         self.register_global_hotkey()
 
     def init_window_properties(self):
@@ -159,7 +159,7 @@ class DesktopOverlayWindow(QWidget):
 
         # [2] 하단 슬림 질문 입력창 (QLineEdit)
         self.input_box = QLineEdit()
-        self.input_box.setPlaceholderText("Ctrl + F1로 활성화 / 질문을 입력하세요...")
+        self.input_box.setPlaceholderText("Alt + Shift + D로 활성화 / 질문을 입력하세요...")
         self.input_box.setFont(QFont("Malgun Gothic", 10))
         self.input_box.setStyleSheet("""
             QLineEdit {
@@ -195,7 +195,7 @@ class DesktopOverlayWindow(QWidget):
 
         self.setGeometry(x, y, self.width_val, self.height_val)
         print(f"[UI] Window positioned at ({x}, {y}) with size {self.width_val}x{self.height_val}")
-        print("[UI] [★단축키 안내★] 키보드 단축키 'Ctrl + F1'를 누르면 바탕화면의 투명 창이 활성화되어 타이핑할 수 있습니다. 'ESC'를 누르면 다시 투과 모드로 돌아갑니다.")
+        print("[UI] [★단축키 안내★] 키보드 단축키 'Alt + Shift + D'를 누르면 바탕화면의 투명 창이 활성화되어 타이핑할 수 있습니다. 'ESC'를 누르면 다시 투과 모드로 돌아갑니다.")
 
     def apply_acrylic_blur(self):
         """Windows DWM API를 이용해 아크릴 블러(Glassmorphism) 효과 적용"""
@@ -276,14 +276,14 @@ class DesktopOverlayWindow(QWidget):
     # 전역 단축키 및 키 이벤트 처리
     # --------------------------------------------------
     def register_global_hotkey(self):
-        """Ctrl + F1 전역 단축키 등록"""
+        """Alt + Shift + D 전역 단축키 등록"""
         hwnd = int(self.winId())
-        # MOD_CONTROL = 0x0002, VK_F1 = 0x70
-        success = ctypes.windll.user32.RegisterHotKey(hwnd, self.HOTKEY_ID, 0x0002, 0x70)
+        # MOD_ALT = 0x0001, MOD_SHIFT = 0x0004, VK_D = 0x44 (조합 = 0x0005)
+        success = ctypes.windll.user32.RegisterHotKey(hwnd, self.HOTKEY_ID, 0x0001 | 0x0004, 0x44)
         if success:
-            print("[UI] Global Hotkey Ctrl+F1 registered successfully.")
+            print("[UI] Global Hotkey Alt+Shift+D registered successfully.")
         else:
-            print("[Error] Failed to register Global Hotkey Ctrl+F1.")
+            print("[Error] Failed to register Global Hotkey Alt+Shift+D.")
 
     def unregister_global_hotkey(self):
         """전역 단축키 등록 해제"""
@@ -300,7 +300,7 @@ class DesktopOverlayWindow(QWidget):
                     msg = MSG.from_address(addr)
                     if msg.message == 0x0312:  # WM_HOTKEY
                         if msg.wParam == self.HOTKEY_ID:
-                            print("[Event] Ctrl+F1 Hotkey detected!")
+                            print("[Event] Alt+Shift+D Hotkey detected!")
                             # 단축키 입력 시 마우스 투과 해제하고 활성화
                             self.disable_click_through()
                             return True, 0
@@ -409,7 +409,7 @@ if __name__ == "__main__":
     window.show()
     
     print("\n=== 바탕화면 투명 에이전트 창 구동 중 ===")
-    print("- 단축키: Ctrl + F1 (마우스 투과 해제 및 텍스트 박스 포커싱)")
+    print("- 단축키: Alt + Shift + D (마우스 투과 해제 및 텍스트 박스 포커싱)")
     print("- 단축키: ESC (마우스 투과 모드 재활성화)")
     print("=========================================\n")
     
