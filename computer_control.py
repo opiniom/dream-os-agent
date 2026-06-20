@@ -15,8 +15,20 @@ import pyautogui
 pyautogui.FAILSAFE = True
 
 def set_dpi_awareness():
-    """Windows 환경에서 디스플레이 배율(DPI Scaling) 오차를 예방하기 위해 프로세스를 DPI-Aware로 설정합니다."""
+    """Windows 환경에서 디스플레이 배율(DPI Scaling) 오차를 예방하기 위해 프로세스를 DPI-Aware로 설정합니다.
+    이미 설정되어 있다면 중복 설정을 하지 않습니다.
+    """
     if sys.platform == "win32":
+        try:
+            # 먼저 현재 DPI 설정 상태를 조회합니다.
+            # 0이 아닌 값이면 이미 DPI Aware 상태이므로 리턴합니다.
+            awareness = ctypes.c_int()
+            hr = ctypes.windll.shcore.GetProcessDpiAwareness(0, ctypes.byref(awareness))
+            if hr == 0 and awareness.value != 0:
+                return
+        except Exception:
+            pass
+
         try:
             # PROCESS_PER_MONITOR_DPI_AWARE = 2 (Windows 8.1+)
             ctypes.windll.shcore.SetProcessDpiAwareness(2)
@@ -27,9 +39,6 @@ def set_dpi_awareness():
                 print("[OS] DPI Awareness: System DPI Aware configured.")
             except Exception:
                 print("[OS] DPI Awareness: Failed to set DPI awareness. Using default OS scaling.")
-
-# 모듈 로드 시 최초 1회 실행
-set_dpi_awareness()
 
 
 # --------------------------------------------------
@@ -49,6 +58,7 @@ def take_desktop_screenshot(grid_interval: int = 100, max_long_edge: int = 1024)
         PIL.Image.Image: 지정된 간격의 격자 오버레이가 포함되고 최적화(JPEG 85% 압축)된 PIL Image 객체.
     """
     try:
+        set_dpi_awareness()
         # 1. 전체 화면 캡처
         try:
             screenshot = ImageGrab.grab()
@@ -134,6 +144,7 @@ def click_coordinates(x: int, y: int) -> bool:
         bool: 마우스 이동 및 클릭이 오류 없이 성공적으로 완료되면 True, 그렇지 않으면 False.
     """
     try:
+        set_dpi_awareness()
         screen_w, screen_h = pyautogui.size()
         if not (0 <= x <= screen_w and 0 <= y <= screen_h):
             print(f"[Warning] Click coordinates ({x}, {y}) out of screen boundaries ({screen_w}x{screen_h}). Attempting anyway.")
