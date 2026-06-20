@@ -306,14 +306,23 @@ class Orchestrator:
 
 
 if __name__ == "__main__":
-    # 오케스트레이터 기동
-    orchestrator = Orchestrator()
-    orchestrator.ui.show()
-    
-    print("\n=== Dream OS Agent 최종 오케스트레이터(main.py) 구동 중 ===")
-    print("- 단축키: Ctrl + Shift + Space (창 활성화 및 입력 포커스)")
-    print("- 단축키: ESC (마우스 클릭 투과 패시브 모드)")
-    print("- 백그라운드 가동: 사용자가 5분간 미작동 시 메모리 리팩토링 Dreaming 자동 구동")
-    print("============================================================\n")
-    
-    sys.exit(app.exec())
+    import traceback
+    try:
+        # 오케스트레이터 기동
+        orchestrator = Orchestrator()
+        orchestrator.ui.show()
+        
+        print("\n=== Dream OS Agent 최종 오케스트레이터(main.py) 구동 중 ===")
+        print("- 단축키: Ctrl + Shift + Space (창 활성화 및 입력 포커스)")
+        print("- 단축키: ESC (마우스 클릭 투과 패시브 모드)")
+        print("- 백그라운드 가동: 사용자가 5분간 미작동 시 메모리 리팩토링 Dreaming 자동 구동")
+        print("============================================================\n")
+        
+        sys.exit(app.exec())
+    except Exception as e:
+        with open("crash_log.txt", "w", encoding="utf-8") as f:
+            f.write(f"Crash occurred: {e}\n")
+            f.write(traceback.format_exc())
+        print(f"[Crash] {e}")
+        traceback.print_exc()
+        sys.exit(1)

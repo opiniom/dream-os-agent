@@ -293,14 +293,19 @@ class DesktopOverlayWindow(QWidget):
 
     def nativeEvent(self, event_type, message):
         """Windows OS 이벤트를 가로채 WM_HOTKEY를 필터링합니다."""
-        if event_type == b"windows_generic_MSG":
-            msg = MSG.from_address(int(message))
-            if msg.message == 0x0312:  # WM_HOTKEY
-                if msg.wParam == self.HOTKEY_ID:
-                    print("[Event] Ctrl+Shift+Space Hotkey detected!")
-                    # 단축키 입력 시 마우스 투과 해제하고 활성화
-                    self.disable_click_through()
-                    return True, 0
+        try:
+            if event_type == b"windows_generic_MSG" and message:
+                addr = int(message)
+                if addr != 0:
+                    msg = MSG.from_address(addr)
+                    if msg.message == 0x0312:  # WM_HOTKEY
+                        if msg.wParam == self.HOTKEY_ID:
+                            print("[Event] Ctrl+Shift+Space Hotkey detected!")
+                            # 단축키 입력 시 마우스 투과 해제하고 활성화
+                            self.disable_click_through()
+                            return True, 0
+        except Exception as e:
+            print(f"[Error] nativeEvent crash prevented: {e}")
         return super().nativeEvent(event_type, message)
 
     def keyPressEvent(self, event):
