@@ -62,19 +62,19 @@ class DesktopOverlayWindow(QWidget):
     HOTKEY_ID = 101
 
     # Active / Inactive 상태에 따른 글래스모피즘 QSS 스타일
-    # Active: 포커스 획득 및 마우스 조작 가능 상태 (조금 더 선명하고 뚜렷한 경계선 및 불투명도 적용)
+    # Active: 포커스 획득 및 마우스 조작 가능 상태 (시각적 확인이 쉬운 붉은색 테두리 적용)
     ACTIVE_QSS = """
     QFrame#Container {
-        background-color: rgba(25, 25, 25, 160);
-        border: 1px solid rgba(255, 255, 255, 45);
+        background-color: rgba(25, 25, 25, 200);
+        border: 2px solid rgba(255, 0, 0, 220);
         border-radius: 16px;
     }
     """
-    # Inactive: 마우스 투과 상태 (매우 불투명도가 낮고 은은한 경계선 적용)
+    # Inactive: 마우스 투과 상태 (시각적 확인이 쉬운 붉은색 테두리 적용)
     INACTIVE_QSS = """
     QFrame#Container {
-        background-color: rgba(15, 15, 15, 60);
-        border: 1px solid rgba(255, 255, 255, 15);
+        background-color: rgba(15, 15, 15, 120);
+        border: 2px solid rgba(255, 0, 0, 150);
         border-radius: 16px;
     }
     """
