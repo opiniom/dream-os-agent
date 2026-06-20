@@ -207,54 +207,24 @@ class DesktopOverlayWindow(QWidget):
     # 마우스 투과 및 포커스 관리 로직 (Windows API 호출)
     # --------------------------------------------------
     def enable_click_through(self):
-        """마우스 클릭 투과 모드를 활성화하여 바탕화면 조작을 허용합니다."""
-        hwnd = int(self.winId())
-        style = GetWindowLong(hwnd, GWL_EXSTYLE)
-        
-        # WS_EX_TRANSPARENT 및 WS_EX_LAYERED 적용
-        SetWindowLong(hwnd, GWL_EXSTYLE, style | WS_EX_TRANSPARENT | WS_EX_LAYERED)
-        
-        # 스타일 업데이트 반영
-        ctypes.windll.user32.SetWindowPos(
-            hwnd, 0, 0, 0, 0, 0, 
-            0x0001 | 0x0002 | 0x0004 | 0x0020 # SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED
-        )
-        
-        # UI 스타일을 투명도가 높은 INACTIVE_QSS로 갱신
+        """마우스 클릭 투과 모드를 흉내 냅니다 (스타일시트만 갱신)."""
         self.container.setStyleSheet(self.INACTIVE_QSS)
         self.input_box.clearFocus()
         self.is_click_through = True
-        print("[UI] Click-through enabled. Window is now passive.")
+        print("[UI] Window set to inactive style.")
 
     def disable_click_through(self):
-        """마우스 클릭 투과를 해제하고 창을 최전면 활성화하여 포커스를 확보합니다."""
-        hwnd = int(self.winId())
-        style = GetWindowLong(hwnd, GWL_EXSTYLE)
-        
-        # WS_EX_TRANSPARENT 속성 제거
-        SetWindowLong(hwnd, GWL_EXSTYLE, style & ~WS_EX_TRANSPARENT)
-        
-        # 스타일 업데이트 반영
-        ctypes.windll.user32.SetWindowPos(
-            hwnd, 0, 0, 0, 0, 0, 
-            0x0001 | 0x0002 | 0x0004 | 0x0020
-        )
-        
-        # UI 스타일을 선명한 ACTIVE_QSS로 갱신
+        """창을 활성화하여 텍스트 상자에 포커스를 강제합니다."""
         self.container.setStyleSheet(self.ACTIVE_QSS)
         
-        # 창 활성화 및 키보드 포커스 먹통 방지를 위해 OS API와 Qt API 연쇄 호출
         self.show()
         self.raise_()
         self.activateWindow()
         
-        # WinAPI 최전면 포커싱 보장
-        ctypes.windll.user32.SetForegroundWindow(hwnd)
-        
-        # 입력 상자에 강제 포커스 제공
+        # 입력 상자에 포커스 제공
         self.input_box.setFocus()
         self.is_click_through = False
-        print("[UI] Click-through disabled. Focus recovered to Input Box.")
+        print("[UI] Focus recovered to Input Box (Native Windows API bypassed).")
 
     # --------------------------------------------------
     # 전역 단축키 미사용 설정
