@@ -1,9 +1,16 @@
 import os
 import sys
 import threading
+
+# pyautogui가 로드되기 전에 QApplication을 먼저 초기화하여 Qt가 DPI 설정을 정상적으로 수행하도록 유도합니다.
+from PyQt6.QtWidgets import QApplication
+app = QApplication.instance()
+if not app:
+    app = QApplication(sys.argv)
+
 import google.generativeai as genai
 from PyQt6.QtCore import QThread, pyqtSignal, Qt
-from PyQt6.QtWidgets import QApplication, QMessageBox
+from PyQt6.QtWidgets import QMessageBox
 
 # 모듈 로컬 임포트
 from agent_memory import AgentMemoryManager, DreamTimer
@@ -299,8 +306,6 @@ class Orchestrator:
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    
     # 오케스트레이터 기동
     orchestrator = Orchestrator()
     orchestrator.ui.show()
