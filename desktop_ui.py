@@ -146,7 +146,7 @@ class DesktopOverlayWindow(QWidget):
 
         # [2] 하단 답변 출력창 (QTextBrowser)
         self.output_view = QTextBrowser()
-        self.output_view.setFont(QFont("Malgun Gothic", 9.5))
+        self.output_view.setFont(QFont("Malgun Gothic", 9))
         self.output_view.setStyleSheet("""
             QTextBrowser {
                 background-color: transparent;
