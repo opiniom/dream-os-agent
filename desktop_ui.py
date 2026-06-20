@@ -195,26 +195,13 @@ class DesktopOverlayWindow(QWidget):
         print("[UI] [안내] ESC 키를 누르면 프로그램이 종료됩니다.")
 
     def apply_acrylic_blur(self):
-        """Windows DWM API를 이용해 아크릴 블러(Glassmorphism) 효과 적용"""
-        hwnd = int(self.winId())
-        
-        accent = ACCENT_POLICY()
-        accent.AccentState = 4  # ACCENT_ENABLE_ACRYLICBLURBEHIND (Windows 10/11)
-        accent.AccentFlags = 2  # 테두리 드로잉 플래그 활성화
-        # 0x22000000 -> 어두운 계열의 아크릴 투명도 (ABGR 형식)
-        accent.GradientColor = 0x22121212
-        accent.AnimationId = 0
-        
-        data = WINDOWCOMPOSITIONATTRIBDATA()
-        data.Attribute = 19  # WCA_ACCENT_POLICY
-        data.Data = ctypes.cast(ctypes.pointer(accent), c_void_p)
-        data.SizeOfData = sizeof(accent)
-        
-        try:
-            ctypes.windll.user32.SetWindowCompositionAttribute(hwnd, ctypes.byref(data))
-            print("[UI] Native Acrylic Blur effect applied successfully.")
-        except Exception as e:
-            print(f"[Error] Failed to apply Acrylic Blur: {e}")
+        """
+        Windows DWM API를 이용해 아크릴 블러 효과를 적용하던 함수입니다.
+        Windows 특정 빌드에서 DWM과 충돌하여 비정상 종료(Fatal C++ Exception)되는 현상을 방지하기 위해 
+        안정적인 Qt 표준 반투명 스타일(RGBA)로 대체하고 DWM ctypes 호출은 비활성화합니다.
+        """
+        print("[UI] Acrylic Blur applied via Qt QSS stylesheet (DWM ctypes disabled for stability).")
+        pass
 
     # --------------------------------------------------
     # 마우스 투과 및 포커스 관리 로직 (Windows API 호출)
