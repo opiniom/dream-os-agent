@@ -70,19 +70,19 @@ class DesktopOverlayWindow(QWidget):
     """
     HOTKEY_ID = 101
 
-    # Active / Inactive 상태에 따른 다크 모드 QSS 스타일 (붉은색 테두리 적용)
+    # Active / Inactive 상태에 따른 다크 모드 QSS 스타일 (표준 RGBA 구조 적용)
     ACTIVE_QSS = """
     QFrame#Container {
-        background-color: #1E1E1E;
+        background-color: rgba(30, 30, 30, 216);
         border: 2px solid rgb(255, 0, 0);
-        border-radius: 12px;
+        border-radius: 10px;
     }
     """
     INACTIVE_QSS = """
     QFrame#Container {
-        background-color: #1E1E1E;
+        background-color: rgba(30, 30, 30, 216);
         border: 2px solid rgb(255, 0, 0);
-        border-radius: 12px;
+        border-radius: 10px;
     }
     """
 
@@ -102,14 +102,13 @@ class DesktopOverlayWindow(QWidget):
 
     def init_window_properties(self):
         """윈도우 기본 창 플래그 및 속성 설정"""
-        # 크래시 유발 위험이 있는 Frameless / Translucent 설정을 모두 해제하고,
-        # 사용 및 이동이 편리하도록 일반적인 프레임이 있는 stays-on-top 창으로 구성합니다.
+        # 가장 안전하고 표준적인 PyQt6 투명도와 프레임리스stays-on-top 플래그 구성
         self.setWindowFlags(
-            Qt.WindowType.Window |
+            Qt.WindowType.FramelessWindowHint |
             Qt.WindowType.WindowStaysOnTopHint
         )
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)
-        self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, False)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+        self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, True)
         self.setWindowTitle("Dream OS Agent")
 
     def init_ui_layout(self):
