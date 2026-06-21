@@ -70,19 +70,19 @@ class DesktopOverlayWindow(QWidget):
     """
     HOTKEY_ID = 101
 
-    # Active / Inactive 상태에 따른 다크 모드 QSS 스타일 (표준 RGBA 구조 적용)
+    # Active / Inactive 상태에 따른 솔리드 다크 모드 QSS 스타일 (붉은색 테두리 적용)
     ACTIVE_QSS = """
     QFrame#Container {
-        background-color: rgba(30, 30, 30, 216);
+        background-color: #1E1E1E;
         border: 2px solid rgb(255, 0, 0);
-        border-radius: 10px;
+        border-radius: 8px;
     }
     """
     INACTIVE_QSS = """
     QFrame#Container {
-        background-color: rgba(30, 30, 30, 216);
+        background-color: #1E1E1E;
         border: 2px solid rgb(255, 0, 0);
-        border-radius: 10px;
+        border-radius: 8px;
     }
     """
 
@@ -102,13 +102,14 @@ class DesktopOverlayWindow(QWidget):
 
     def init_window_properties(self):
         """윈도우 기본 창 플래그 및 속성 설정"""
-        # 가장 안전하고 표준적인 PyQt6 투명도와 프레임리스stays-on-top 플래그 구성
+        # 크래시가 발생하는 프레임리스(Frameless)와 투명 배경(Translucent) 속성을 완전히 끄고,
+        # 100% 안정적으로 구동되는 일반 윈도우 창(Stays on Top 활성화) 구조로 전환합니다.
         self.setWindowFlags(
-            Qt.WindowType.FramelessWindowHint |
+            Qt.WindowType.Window |
             Qt.WindowType.WindowStaysOnTopHint
         )
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
-        self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, True)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)
+        self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, False)
         self.setWindowTitle("Dream OS Agent")
 
     def init_ui_layout(self):
@@ -306,18 +307,10 @@ class DesktopOverlayWindow(QWidget):
     # 드래그 앤 드롭 이동 지원 (활성화 상태에서만 드래그 가능)
     # --------------------------------------------------
     def mousePressEvent(self, event):
-        if not self.is_click_through and event.button() == Qt.MouseButton.LeftButton:
-            self._drag_position = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
-            event.accept()
-        else:
-            super().mousePressEvent(event)
+        super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
-        if not self.is_click_through and event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, '_drag_position'):
-            self.move(event.globalPosition().toPoint() - self._drag_position)
-            event.accept()
-        else:
-            super().mouseMoveEvent(event)
+        super().mouseMoveEvent(event)
 
     def closeEvent(self, event):
         """종료 시 단축키 해제 및 타이머 정지"""
