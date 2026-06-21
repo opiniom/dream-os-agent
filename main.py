@@ -306,10 +306,24 @@ class Orchestrator:
 
 
 if __name__ == "__main__":
+    import sys
+    from PyQt6.QtWidgets import QApplication
     import traceback
+    
+    # 전역변수 수준의 할당으로 GC에 의한 소멸을 완벽하게 방어합니다.
+    global_app = None
+    orchestrator = None
+
     try:
-        # 오케스트레이터 기동
+        # 1. QApplication 인스턴스가 올바르게 생성되는지 확인
+        global_app = QApplication.instance()
+        if not global_app:
+            global_app = QApplication(sys.argv)
+        
+        # 2. Orchestrator 인스턴스가 함수 블록이 끝날 때 증발하지 않도록 메인/전역 변수에 명시적 할당
         orchestrator = Orchestrator()
+        
+        # 3. 창을 화면에 표시 (내부 초기화에 self.show()가 없더라도 뜨도록 강제 호출)
         orchestrator.ui.show()
         
         print("\n=== Dream OS Agent 최종 오케스트레이터(main.py) 구동 중 ===")
@@ -318,7 +332,8 @@ if __name__ == "__main__":
         print("- 백그라운드 가동: 사용자가 5분간 미작동 시 메모리 리팩토링 Dreaming 자동 구동")
         print("============================================================\n")
         
-        sys.exit(app.exec())
+        # 4. PyQt6 무한 이벤트 루프가 정상 작동하여 프로세스를 붙잡아두도록 설정
+        sys.exit(global_app.exec())
     except Exception as e:
         with open("crash_log.txt", "w", encoding="utf-8") as f:
             f.write(f"Crash occurred: {e}\n")
