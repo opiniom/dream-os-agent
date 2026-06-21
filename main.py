@@ -1,5 +1,16 @@
+import ctypes
 import os
 import sys
+
+# pyautogui가 로드되기 전에 DPI Awareness를 선제 선언하여 충돌 및 크래시를 방어합니다.
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(2) # PROCESS_PER_MONITOR_DPI_AWARE
+except Exception:
+    try:
+        ctypes.windll.user32.SetProcessDPIAware()
+    except Exception:
+        pass
+
 import threading
 
 # pyautogui가 로드되기 전에 QApplication을 먼저 초기화하여 Qt가 DPI 설정을 정상적으로 수행하도록 유도합니다.

@@ -5,6 +5,15 @@ import datetime
 from ctypes import windll, c_int, c_bool, c_void_p, Structure, sizeof
 from ctypes.wintypes import MSG, HWND
 
+# DPI Awareness 선제 기동
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)
+except Exception:
+    try:
+        ctypes.windll.user32.SetProcessDPIAware()
+    except Exception:
+        pass
+
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QLineEdit, 
     QTextBrowser, QFrame, QSizePolicy
@@ -61,21 +70,19 @@ class DesktopOverlayWindow(QWidget):
     """
     HOTKEY_ID = 101
 
-    # Active / Inactive 상태에 따른 글래스모피즘 QSS 스타일
-    # Active: 포커스 획득 및 마우스 조작 가능 상태 (시각적 확인이 쉬운 붉은색 테두리 적용)
+    # Active / Inactive 상태에 따른 다크 모드 QSS 스타일 (붉은색 테두리 적용)
     ACTIVE_QSS = """
     QFrame#Container {
-        background-color: rgba(25, 25, 25, 200);
-        border: 2px solid rgba(255, 0, 0, 220);
-        border-radius: 16px;
+        background-color: #1E1E1E;
+        border: 2px solid rgb(255, 0, 0);
+        border-radius: 12px;
     }
     """
-    # Inactive: 마우스 투과 상태 (시각적 확인이 쉬운 붉은색 테두리 적용)
     INACTIVE_QSS = """
     QFrame#Container {
-        background-color: rgba(15, 15, 15, 120);
-        border: 2px solid rgba(255, 0, 0, 150);
-        border-radius: 16px;
+        background-color: #1E1E1E;
+        border: 2px solid rgb(255, 0, 0);
+        border-radius: 12px;
     }
     """
 
@@ -95,15 +102,15 @@ class DesktopOverlayWindow(QWidget):
 
     def init_window_properties(self):
         """윈도우 기본 창 플래그 및 속성 설정"""
-        # 프레임 없음, 항상 위에 표시, 작업표시줄 아이콘 미표시(Tool)
+        # 크래시 유발 위험이 있는 Frameless / Translucent 설정을 모두 해제하고,
+        # 사용 및 이동이 편리하도록 일반적인 프레임이 있는 stays-on-top 창으로 구성합니다.
         self.setWindowFlags(
-            Qt.WindowType.FramelessWindowHint | 
-            Qt.WindowType.WindowStaysOnTopHint | 
-            Qt.WindowType.Tool
+            Qt.WindowType.Window |
+            Qt.WindowType.WindowStaysOnTopHint
         )
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
-        self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, True)
-        self.setWindowTitle("Dream OS Agent Overlay")
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)
+        self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, False)
+        self.setWindowTitle("Dream OS Agent")
 
     def init_ui_layout(self):
         """UI 구성 요소 생성 및 배치 (상단 답변 창, 하단 슬림 질문 입력 창 배치)"""
